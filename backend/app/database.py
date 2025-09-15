@@ -3,22 +3,27 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Debug: Print semua environment variables terkait database
-print("=== DATABASE ENVIRONMENT VARIABLES ===")
-print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
-print(f"MYSQLHOST: {os.getenv('MYSQLHOST')}")
-print(f"MYSQLDATABASE: {os.getenv('MYSQLDATABASE')}")
-print("======================================")
+print("=== DATABASE CONFIGURATION ===")
 
-# Prioritaskan DATABASE_URL, jika tidak ada gunakan variable lainnya
+# Gunakan DATABASE_URL jika ada
 database_url = os.getenv('DATABASE_URL')
+
 if not database_url:
-    # Construct DATABASE_URL dari individual variables
-    host = os.getenv('MYSQLHOST', 'mysql.railway.internal')
-    database = os.getenv('MYSQLDATABASE', 'railway')
-    password = os.getenv('MYSQLPASSWORD', 'BFFHoYLBITIncMbodbJxxuEOIpMLqscT')
-    database_url = f"mysql://root:{password}@{host}:3306/{database}"
-    print(f"Constructed DATABASE_URL: {database_url}")
+    # Construct dari individual variables - TANPA DEFAULT PASSWORD!
+    host = os.getenv('MYSQLHOST')
+    database = os.getenv('MYSQLDATABASE')
+    password = os.getenv('MYSQLPASSWORD')  # ← TANPA DEFAULT VALUE!
+    user = os.getenv('MYSQLUSER', 'root')
+    
+    if all([host, database, password]):
+        database_url = f"mysql://{user}:{password}@{host}:3306/{database}"
+        print(f"Constructed DATABASE_URL: {database_url}")
+    else:
+        # Fallback ke localhost untuk development
+        database_url = "mysql+mysqlconnector://root:@localhost/ecommerce_db"
+        print("Using local development database")
+else:
+    print(f"Using provided DATABASE_URL: {database_url}")
 
 # Fix URL format untuk SQLAlchemy
 if database_url.startswith("mysql://"):
