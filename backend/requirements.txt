@@ -1,14 +1,6 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 sqlalchemy==2.0.23
-<<<<<<< HEAD
 mysql-connector-python==8.1.0
 pydantic==2.5.0
 python-multipart==0.0.6
-=======
-pymysql==1.1.0
-python-multipart==0.0.6
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-email-validator==2.1.0
->>>>>>> 44b98b435959bd432e550bb913cdc66bc2cbd2c5
