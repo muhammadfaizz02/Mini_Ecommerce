@@ -8,7 +8,7 @@ print(f"RAILWAY_ENVIRONMENT: {os.getenv('RAILWAY_ENVIRONMENT')}")
 print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
 print(f"MYSQLHOST: {os.getenv('MYSQLHOST')}")
 print(f"MYSQLDATABASE: {os.getenv('MYSQLDATABASE')}")
-print(f"MYSQLPASSWORD: {'*' * len(os.getenv('MYSQLPASSWORD', ''))}")  # Mask password
+print(f"MYSQLPASSWORD: {'*' * len(os.getenv('MYSQLPASSWORD', ''))}")
 print(f"MYSQLUSER: {os.getenv('MYSQLUSER')}")
 print("===========================")
 
@@ -24,11 +24,20 @@ if not database_url:
         password = os.getenv('MYSQLPASSWORD')
         user = os.getenv('MYSQLUSER', 'root')
         
-        if all([host, database, password]):
+        # Check if all required variables are present
+        missing_vars = []
+        if not host: missing_vars.append('MYSQLHOST')
+        if not database: missing_vars.append('MYSQLDATABASE')
+        if not password: missing_vars.append('MYSQLPASSWORD')
+        
+        if missing_vars:
+            print(f"WARNING: Missing MySQL variables: {missing_vars}")
+            # Fallback to local for now instead of crashing
+            database_url = "mysql+mysqlconnector://root:@localhost/ecommerce_db"
+            print("Falling back to local development database")
+        else:
             database_url = f"mysql://{user}:{password}@{host}:3306/{database}"
             print(f"Constructed Railway DATABASE_URL: {database_url}")
-        else:
-            raise ValueError("Missing required MySQL environment variables for Railway")
     else:
         # Local development
         database_url = "mysql+mysqlconnector://root:@localhost/ecommerce_db"
