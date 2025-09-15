@@ -7,6 +7,11 @@ Base.metadata.create_all(bind=engine)
 
 def seed_data():
     db = SessionLocal()
+
+    existing_products = db.query(Product).count()
+    if existing_products > 0:
+        db.close()
+        return
     
     sample_products = [
         Product(
