@@ -6,5 +6,10 @@ frontend/.env
 backend/venv
 __pycache__/
 
+# Bytecode
+*.pyc
+*.pyo
+*.pyd
+
 # Misc
 *.log
