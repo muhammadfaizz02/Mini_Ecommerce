@@ -5,7 +5,7 @@ from .routers import products, orders
 import os
 
 # Buat tabel database
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # Auto-seeding data sample
 try:
