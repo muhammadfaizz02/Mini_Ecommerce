@@ -5,7 +5,7 @@ from .routers import products, orders
 import os
 
 # COMMENT SEMUA DATABASE OPERATIONS
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="E-Commerce Mini API", version="1.0.0")
 
