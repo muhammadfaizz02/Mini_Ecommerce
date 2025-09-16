@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
-from .database import Base
+Base = declarative_base()
 
 class Product(Base):
     __tablename__ = "products"
