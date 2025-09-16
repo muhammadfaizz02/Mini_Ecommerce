@@ -1,41 +1,17 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from .database import engine, Base  
+from .routers import products, orders
 import os
 
-# Import dengan absolute path
-from app.database import engine, Base, SessionLocal, get_db
-from app import models
-from app.routers import products, orders
-from app.seed_data import seed_data
-
-# UNCOMMENT - ENABLE DATABASE CREATION
-Base.metadata.create_all(bind=engine)
+# COMMENT SEMUA DATABASE OPERATIONS
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="E-Commerce Mini API", version="1.0.0")
 
-# FUNGSI AUTO-SEED
-@app.on_event("startup")
-def startup_event():
-    try:
-        print("🔄 Checking and seeding database...")
-        db = SessionLocal()
-        product_count = db.query(models.Product).count()
-        if product_count == 0:
-            print("🌱 Seeding database...")
-            seed_data()
-            print("✅ Database seeded successfully!")
-        else:
-            print(f"✅ Database already has {product_count} products")
-        db.close()
-    except Exception as e:
-        print(f"❌ Startup error: {str(e)}")
-
-# Configure CORS
 origins = [
     "http://localhost:3000",
     "https://mini-ecommerce-khaki-ten.vercel.app",
-    "https://miniecommerce-production.up.railway.app"
 ]
 
 app.add_middleware(
@@ -57,18 +33,10 @@ def read_root():
 def health_check():
     return {"status": "healthy"}
 
+# Tambahkan endpoint untuk test connection
 @app.get("/db-status")
-def db_status(db: Session = Depends(get_db)):
-    try:
-        product_count = db.query(models.Product).count()
-        return {
-            "status": "connected",
-            "tables_created": True,
-            "products_count": product_count
-        }
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+def db_status():
+    return {
+        "status": "database_operations_disabled",
+        "message": "Database operations temporarily disabled for debugging"
+    }
