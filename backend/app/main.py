@@ -1,11 +1,31 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base  
-from .routers import products, orders
+from database import engine, Base  # HAPUS TITIK (absolute import)
+from routers import products, orders  # HAPUS TITIK
 import os
+from seed_data import seed_data  # IMPORT SEED DATA
+from sqlalchemy.orm import Session
+from database import SessionLocal
+import models
 
-# COMMENT SEMUA DATABASE OPERATIONS
-# Base.metadata.create_all(bind=engine)
+# ENABLE DATABASE CREATION
+Base.metadata.create_all(bind=engine)
+
+# FUNGSI AUTO-SEED
+def auto_seed():
+    try:
+        db = SessionLocal()
+        if db.query(models.Product).count() == 0:
+            seed_data()
+            print("✅ Data seeded successfully!")
+        else:
+            print("✅ Data already exists, skipping seeding.")
+        db.close()
+    except Exception as e:
+        print(f"❌ Seeding error: {e}")
+
+# JALANKAN AUTO-SEED
+auto_seed()
 
 app = FastAPI(title="E-Commerce Mini API", version="1.0.0")
 
@@ -33,10 +53,20 @@ def read_root():
 def health_check():
     return {"status": "healthy"}
 
-# Tambahkan endpoint untuk test connection
+# Endpoint untuk test connection
 @app.get("/db-status")
 def db_status():
-    return {
-        "status": "database_operations_disabled",
-        "message": "Database operations temporarily disabled for debugging"
-    }
+    try:
+        db = SessionLocal()
+        count = db.query(models.Product).count()
+        db.close()
+        return {
+            "status": "connected",
+            "tables_created": True,
+            "products_count": count
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
