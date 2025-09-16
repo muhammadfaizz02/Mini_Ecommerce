@@ -64,4 +64,3 @@ class OrderWithProducts(Order):
     
     class Config:
         orm_mode = True
-
