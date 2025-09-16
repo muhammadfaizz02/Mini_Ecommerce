@@ -1,7 +1,8 @@
-# backend/app/seed_data.py
 from sqlalchemy.orm import Session
-from .database import SessionLocal
-from .models import Product
+from .database import SessionLocal, engine
+from .models import Product, Base
+
+Base.metadata.create_all(bind=engine)
 
 def seed_data():
     db = SessionLocal()
