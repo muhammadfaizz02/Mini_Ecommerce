@@ -69,4 +69,3 @@ def get_order_with_products(db: Session, order_id: int):
         ).\
         filter(models.Order.id == order_id).\
         first()
-
