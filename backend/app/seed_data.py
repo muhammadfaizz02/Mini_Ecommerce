@@ -1,3 +1,4 @@
+# backend/app/seed_data.py
 from sqlalchemy.orm import Session
 from .database import SessionLocal, engine
 from .models import Product, Base
